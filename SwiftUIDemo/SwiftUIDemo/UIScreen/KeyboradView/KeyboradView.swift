@@ -2,13 +2,14 @@
 //  KeyboradView.swift
 //  SwiftUIDemo
 //
-//  Created by Rath! on 21/6/24.
+//  Created by Rath! on 21/6/26.
 //
 
 import SwiftUI
 
 struct KeyboradView: View {
     
+    @State var isActivePasscode = false
     @State private var display = ""
     // for view circle
     let numCircles = 6
@@ -21,15 +22,16 @@ struct KeyboradView: View {
     
     
     private let data = [["1","2", "3"],
-                        ["4", "5", "6"],
+                        ["6", "5", "6"],
                         ["7", "8", "9"],
-                        ["", "0", "Delete"],
+                        ["", "0", "Delete"]
     ]
     
     var body: some View {
         let margin: CGFloat = 20
         let buttonSize: CGFloat = 80
         let width = UIScreen.main.bounds.width
+        let alignment: CGFloat = (width - (buttonSize * 3 + margin * 2)) / 2
         
         
         VStack(alignment: .center) {
@@ -46,15 +48,29 @@ struct KeyboradView: View {
                                 .stroke(Color.orange, lineWidth: 1.5)
                         )
                         .offset(x: isShaking ? 10 : isLeft)
-                        .onAppear {
-                            startShakingAnimation()
-                        }
+                    
                 }
                 Spacer()
             }
             
             Spacer()
+            // keyorad
+            HStack(spacing: 15) {
+                Spacer()
+                Button(action: {
+                    
+                }) {
+                    Text("Forget Passcode")
+                        .font(.system(size: 16))
+                        .bold()
+                }
+            }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: alignment))
+            
+            
+            // keyorad
             VStack(alignment: .center, spacing: 15) {
+                
                 ForEach(data, id: \.description) { items in
                     HStack(alignment: .center, spacing: margin) {
                         ForEach(items, id: \.description) { item in
@@ -67,7 +83,6 @@ struct KeyboradView: View {
                                         .font(.title)
                                         .frame(width: buttonSize, height: buttonSize)
                                         .foregroundColor(Color.orange)
-                                    
                                 }
                             } else {
                                 Button(action: {
@@ -80,8 +95,8 @@ struct KeyboradView: View {
                                         .foregroundColor(item == "" ? Color.clear : Color.orange)
                                         .background(
                                             RoundedRectangle(cornerRadius: buttonSize / 2)
-                                                .fill(item == "" ? Color.clear : Color.white)
-                                                .shadow(color: Color.gray.opacity(0.3), radius: 3, x: 0, y: 3)
+                                                .fill(item == "" ? Color.clear : Color.clear)
+                                                .shadow(color: Color.black.opacity(1), radius: 3, x: 0, y: 3)
                                         )
                                         .overlay(
                                             RoundedRectangle(cornerRadius: buttonSize / 2)
@@ -94,19 +109,24 @@ struct KeyboradView: View {
                 }
             }
             .padding(EdgeInsets(top: 0,
-                                leading: (width - (buttonSize * 3 + margin * 2)) / 2,
-                                bottom: 0,
-                                trailing: (width - (buttonSize * 3 + margin * 2)) / 2))
+                                leading: alignment,
+                                bottom: 0, trailing: alignment))
             Spacer()
         }
-        
-        .frame(minWidth: 0, maxWidth: .infinity,
-               minHeight: 0, maxHeight: .infinity)
+        //        .navigationTitle("KeyboradView")
+        //        .frame(minWidth: 0, maxWidth: .infinity,
+        //               minHeight: 0, maxHeight: .infinity)
         .background(Color.white)
         
+        //MARK: When passcode right
+        NavigationLink(
+            destination: HomeView(),
+            isActive: $isActivePasscode
+        ) {
+            EmptyView()
+        }
+        
     }
-    
-    
     
 }
 
@@ -152,12 +172,16 @@ extension KeyboradView{
             display.append(symbol)
             isPressed[display.count - 1] = true
             
+            // Complete pass code
             if display.count == 6{
                 print("Complete passcodes")
                 if display == "111111"{
+                    
+                    isActivePasscode = true
                     print("Passcodes Currect.")
+                    
                 }else{
-                   
+                    
                     inCurrectPasscode()
                 }
             }
@@ -185,12 +209,6 @@ extension KeyboradView{
 }
 
 
-
-struct Calculator_Previews : PreviewProvider {
-    static var previews: some View {
-        KeyboradView()
-    }
-}
 
 
 
